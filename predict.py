@@ -20,8 +20,7 @@ with open('train_subset.csv', 'r') as subset_fh:
         smiles   = row[0]
         text=row[1]
         features=DataFrame.transpose(DataFrame(text.split()[1:]))
-        #features = np.array(row[1])
-        gap      = float(row[2])
+        gap=DataFrame(float(row[2]), index=[0], columns=[0])
         
         train_subset.append({ 'smiles':   smiles,
                             'features': features,
@@ -36,20 +35,16 @@ train_subset_test = train_subset[501:]
 
 #Lasso regression code here
 
-for i in range(3):
+for i in range(501):
     if i==0:
         X=train_subset_train[0]['features']
         print type(X)     
-        #y=DataFrame(train_subset_train[0]['gap'])
-        #print type(y)
+        y=train_subset_train[0]['gap']
     else:
-        X=X.append(X, train_subset_train[i]['features'])
-        #y=np.append(y, train_subset_train[i]['gap'])
-        print 'okay'
-print X.shape
-#print y.shape
-#first=DataFrame.transpose(DataFrame(testing1.split()[1:]))
-#print first
+        X=X.append(train_subset_train[i]['features'], ignore_index=True)
+        y=y.append(train_subset_train[i]['gap'], ignore_index=True)
+print X
+print y
 
 #testing=Lasso()
 #testing.fit(X, y)
