@@ -37,15 +37,13 @@ train_subset_test = train_subset[501:]
 
 for i in range(501):
     if i==0:
-        X=train_subset_train[0]['features']
-        print type(X)     
+        X=train_subset_train[0]['features']    
         y=train_subset_train[0]['gap']
     else:
         X=X.append(train_subset_train[i]['features'], ignore_index=True)
         y=y.append(train_subset_train[i]['gap'], ignore_index=True)
-print X
-print y
-
+Xtest=X.as_matrix()
+ytest=y.as_matrix()
+print type(Xtest), type(ytest)
 #testing=Lasso()
-#testing.fit(X, y)
-#X = np.empty()
+#testing.fit(Xtest, ytest)
