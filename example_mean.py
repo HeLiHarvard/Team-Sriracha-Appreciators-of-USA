@@ -9,21 +9,13 @@ pred_filename  = 'example_mean.csv'
 # Load the training file.
 train_data = []
 with gzip.open(train_filename, 'r') as train_fh:
-<<<<<<< HEAD
 
-=======
-    
->>>>>>> FETCH_HEAD
     # Parse it as a CSV file.
     train_csv = csv.reader(train_fh, delimiter=',', quotechar='"')
     
     # Skip the header row.
     next(train_csv, None)
-<<<<<<< HEAD
 
-=======
-    
->>>>>>> FETCH_HEAD
     # Load the data.
     for row in train_csv:
         smiles   = row[0]
@@ -31,71 +23,57 @@ with gzip.open(train_filename, 'r') as train_fh:
         gap      = float(row[257])
         
         train_data.append({ 'smiles':   smiles,
-<<<<<<< HEAD
                             'features': features,
                             'gap':      gap })
-=======
-                          'features': features,
-                          'gap':      gap })
->>>>>>> FETCH_HEAD
+
+
+# Create subset to work with
+train_subset = train_data[:1001]
+
+# Write train_subset file.
+with open('train_subset.csv', 'w') as subset_fh:
+
+    # Produce a CSV file.
+    subset_csv = csv.writer(subset_fh, delimiter=',', quotechar='"')
+    
+    for datum in train_subset:
+        subset_csv.writerow([datum['smiles'], datum['features'], datum['gap']])
+
+
+###### EVERYTHING BELOW HERE COMMENTED OUT FOR NOW TO SHORTEN RUNNING TIME.
 
 # Compute the mean of the gaps in the training data.
-gaps = np.array([datum['gap'] for datum in train_data])
-mean_gap = np.mean(gaps)
+#gaps = np.array([datum['gap'] for datum in train_data])
+#mean_gap = np.mean(gaps)
 
 # Load the test file.
-test_data = []
-with gzip.open(test_filename, 'r') as test_fh:
-<<<<<<< HEAD
+#test_data = []
+#with gzip.open(test_filename, 'r') as test_fh:
 
-=======
-    
->>>>>>> FETCH_HEAD
     # Parse it as a CSV file.
-    test_csv = csv.reader(test_fh, delimiter=',', quotechar='"')
+ #   test_csv = csv.reader(test_fh, delimiter=',', quotechar='"')
     
     # Skip the header row.
-    next(test_csv, None)
-<<<<<<< HEAD
+ #   next(test_csv, None)
 
-=======
-    
->>>>>>> FETCH_HEAD
     # Load the data.
-    for row in test_csv:
-        id       = row[0]
-        smiles   = row[1]
-        features = np.array([float(x) for x in row[2:258]])
+ #   for row in test_csv:
+ #       id       = row[0]
+ #       smiles   = row[1]
+ #       features = np.array([float(x) for x in row[2:258]])
         
-        test_data.append({ 'id':       id,
-<<<<<<< HEAD
-                           'smiles':   smiles,
-                           'features': features })
+ #       test_data.append({ 'id':       id,
+ #                          'smiles':   smiles,
+ #                          'features': features })
 
 # Write a prediction file.
-with open(pred_filename, 'w') as pred_fh:
+#with open(pred_filename, 'w') as pred_fh:
 
     # Produce a CSV file.
-    pred_csv = csv.writer(pred_fh, delimiter=',', quotechar='"')
+ #   pred_csv = csv.writer(pred_fh, delimiter=',', quotechar='"')
 
     # Write the header row.
-    pred_csv.writerow(['Id', 'Prediction'])
+ #   pred_csv.writerow(['Id', 'Prediction'])
 
-    for datum in test_data:
-        pred_csv.writerow([datum['id'], mean_gap])
-=======
-                         'smiles':   smiles,
-                         'features': features })
-
-# Write a prediction file.
-with open(pred_filename, 'w') as pred_fh:
-    
-    # Produce a CSV file.
-    pred_csv = csv.writer(pred_fh, delimiter=',', quotechar='"')
-    
-    # Write the header row.
-    pred_csv.writerow(['Id', 'Prediction'])
-    
-    for datum in test_data:
-        pred_csv.writerow([datum['id'], mean_gap])
->>>>>>> FETCH_HEAD
+ #   for datum in test_data:
+ #       pred_csv.writerow([datum['id'], mean_gap])
