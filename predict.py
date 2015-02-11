@@ -46,10 +46,21 @@ for i in range(501):
     else:
         X=X.append(train_subset_train[i]['features'], ignore_index=True)
         y=y.append(train_subset_train[i]['gap'], ignore_index=True)
+Xtrain=X.as_matrix()
+ytrain=y.as_matrix()
+
+for i in range(500):
+    if i==0:
+        X=train_subset_test[0]['features']
+        y=train_subset_test[0]['gap']
+    else:
+        X=X.append(train_subset_test[i]['features'], ignore_index=True)
+        y=y.append(train_subset_test[i]['gap'], ignore_index=True)
 Xtest=X.as_matrix()
 ytest=y.as_matrix()
 print type(Xtest), type(ytest)
 
 
 testing=Lasso()
-testing.fit(Xtest, ytest)
+print testing.fit(Xtrain, ytrain)
+print testing.coef_
