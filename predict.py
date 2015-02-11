@@ -20,7 +20,7 @@ with open('train_subset.csv', 'r') as subset_fh:
         smiles   = row[0]
         blah=row[1]
         #testing2=[float(i) for i in row[1].split()[1:]]
-        features=DataFrame.transpose(DataFrame(blah.split()[1:]))
+        features=DataFrame.transpose(DataFrame(blah.split(']')[0].split()[1:]))
         gap=DataFrame(float(row[2]), index=[0], columns=[0])
 
         train_subset.append({ 'smiles':   smiles,
