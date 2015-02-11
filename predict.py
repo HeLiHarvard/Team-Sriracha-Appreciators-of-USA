@@ -35,8 +35,13 @@ train_subset_test = train_subset[501:]
 #Lasso regression code here
 
 for i in range(501):
+<<<<<<< Updated upstream
     if i==0:
         X=train_subset_train[0]['features']
+=======
+    if i==0: 
+        X=train_subset_train[0]['features']    
+>>>>>>> Stashed changes
         y=train_subset_train[0]['gap']
     else:
         X=X.append(train_subset_train[i]['features'], ignore_index=True)
