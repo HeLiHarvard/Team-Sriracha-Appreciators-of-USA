@@ -11,7 +11,7 @@ with open('train_subset.csv', 'r') as subset_fh:
 
     # Parse it as a CSV file.
     subset_csv = csv.reader(subset_fh, delimiter=',', quotechar='"')
-    
+
     # Skip the header row.
     next(subset_csv, None)
 
@@ -22,7 +22,7 @@ with open('train_subset.csv', 'r') as subset_fh:
         #testing2=[float(i) for i in row[1].split()[1:]]
         features=DataFrame.transpose(DataFrame(blah.split()[1:]))
         gap=DataFrame(float(row[2]), index=[0], columns=[0])
-        
+
         train_subset.append({ 'smiles':   smiles,
                             'features': features,
                             'gap':      gap })
@@ -38,7 +38,7 @@ train_subset_test = train_subset[501:]
 
 for i in range(501):
     if i==0:
-        X=train_subset_train[0]['features']    
+        X=train_subset_train[0]['features']
         y=train_subset_train[0]['gap']
     else:
         X=X.append(train_subset_train[i]['features'], ignore_index=True)
@@ -48,7 +48,7 @@ ytest=y.as_matrix()
 print type(Xtest), type(ytest)
 #testing=Lasso()
 #testing.fit(Xtest, ytest)
-#print row[1].split()[1:]
-#for i in blah.split()[1:]:
-#    print i
-#    print float(i)
+print row[1].split()[1:]
+for i in blah.split()[1:]:
+    print i
+    print float(i[:-1])
