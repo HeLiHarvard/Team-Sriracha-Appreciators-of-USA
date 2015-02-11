@@ -18,8 +18,9 @@ with open('train_subset.csv', 'r') as subset_fh:
     # Load the data.
     for row in subset_csv:
         smiles   = row[0]
-        text=row[1]
-        features=DataFrame.transpose(DataFrame(text.split()[1:]))
+        blah=row[1]
+        #testing2=[float(i) for i in row[1].split()[1:]]
+        features=DataFrame.transpose(DataFrame(blah.split()[1:]))
         gap=DataFrame(float(row[2]), index=[0], columns=[0])
         
         train_subset.append({ 'smiles':   smiles,
@@ -47,3 +48,7 @@ ytest=y.as_matrix()
 print type(Xtest), type(ytest)
 #testing=Lasso()
 #testing.fit(Xtest, ytest)
+#print row[1].split()[1:]
+#for i in blah.split()[1:]:
+#    print i
+#    print float(i)
