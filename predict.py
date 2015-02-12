@@ -2,8 +2,7 @@ import csv
 import numpy as np
 import random
 import sklearn.linear_model
-from  sklearn.linear_model import Lasso
-from sklearn.linear_model import Ridge
+from  sklearn.linear_model import Lasso, Ridge, ElasticNet
 from pandas import DataFrame
 
 # Load the subset file.
@@ -70,5 +69,13 @@ ridpredictions=ridge.fit(Xtrain, ytrain).predict(Xtest)
 ridpredictions=DataFrame(ridpredictions)#changes forms of predictions
 ytestrid=DataFrame(y.values, index=ridpredictions.index, columns=['Correct Values'])
 ytestrid['Predictions']=ridpredictions#dataframe with predictions and correct value
-print ytestrid
-print ridge.coef_
+#print ytestrid
+#print ridge.coef_
+
+en=ElasticNet(alpha=1, l1_ratio= 0)#second term is l1/l2 ratio of penalty. set to 0 means all l2, 1 means l1
+enpredictions=en.fit(Xtrain,ytrain).predict(Xtest)
+enpredictions=DataFrame(enpredictions)#changes forms of predictions
+ytesten=DataFrame(y.values, index=enpredictions.index, columns=['Correct Values'])
+ytesten['Predictions']=enpredictions#dataframe with predictions and correct value
+print en.coef_
+print ytesten
