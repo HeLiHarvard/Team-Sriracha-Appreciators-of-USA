@@ -28,7 +28,7 @@ with gzip.open(train_filename, 'r') as train_fh:
 
 
 # Create subset to work with
-train_subset = train_data[:1001]
+train_subset = train_data[:10001]
 
 # Write train_subset file.
 with open('train_subset.csv', 'w') as subset_fh:
