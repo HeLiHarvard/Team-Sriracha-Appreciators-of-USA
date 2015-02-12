@@ -57,8 +57,9 @@ for i in range(4999):#ditto for test features
 Xtest=X.as_matrix()
 ytest=y.as_matrix()
 
-alpha=.01
+alpha=10
 lasso=Lasso(alpha=alpha)
+print 'alpha: ' + str(alpha)
 
 predictions=lasso.fit(Xtrain, ytrain).predict(Xtest)#trains and predicts
 lasso.coef_#coefficients
@@ -67,7 +68,7 @@ ytest2=DataFrame(y.values, index=predictions.index, columns=['Correct Values'])
 ytest2['Predictions']=predictions#dataframe with predictions and correct value
 #print ytest2
 lasso.coef_
-print 100*math.sqrt(mean_squared_error(ytest2['Correct Values'], ytest2['Predictions']))/ytest2['Correct Values'].mean(axis=1)
+print 'Lasso: ' + str(100*math.sqrt(mean_squared_error(ytest2['Correct Values'], ytest2['Predictions']))/ytest2['Correct Values'].mean(axis=1))
 
 ridge=Ridge(alpha=alpha)
 ridpredictions=ridge.fit(Xtrain, ytrain).predict(Xtest)
@@ -76,23 +77,39 @@ ytestrid=DataFrame(y.values, index=ridpredictions.index, columns=['Correct Value
 ytestrid['Predictions']=ridpredictions#dataframe with predictions and correct value
 #print ytestrid
 ridge.coef_
-print 100*math.sqrt(mean_squared_error(ytestrid['Correct Values'], ytestrid['Predictions']))/ytestrid['Correct Values'].mean(axis=1)
+print 'Ridge: '+str(100*math.sqrt(mean_squared_error(ytestrid['Correct Values'], ytestrid['Predictions']))/ytestrid['Correct Values'].mean(axis=1))
 
-en=ElasticNet(alpha=alpha, l1_ratio= 0.1)#second term is l1/l2 ratio of penalty. set to 0 means all l2, 1 means l1
+l1ratio=.1
+en=ElasticNet(alpha=alpha, l1_ratio= l1ratio)#second term is l1/l2 ratio of penalty. set to 0 means all l2, 1 means l1
 enpredictions=en.fit(Xtrain,ytrain).predict(Xtest)
 enpredictions=DataFrame(enpredictions)#changes forms of predictions
 ytesten=DataFrame(y.values, index=enpredictions.index, columns=['Correct Values'])
 ytesten['Predictions']=enpredictions#dataframe with predictions and correct value
 en.coef_
 ytesten
-print 100*math.sqrt(mean_squared_error(ytesten['Correct Values'], ytesten['Predictions']))/ytest2['Correct Values'].mean(axis=1)
+print 'Elastic Net ' + '(L1 ratio = ' + str(l1ratio) + ') :'+ str(100*math.sqrt(mean_squared_error(ytesten['Correct Values'], ytesten['Predictions']))/ytest2['Correct Values'].mean(axis=1))
 
 stupidprediction=DataFrame(np.mean(ytrain),index=enpredictions.index, columns=['Averages'])
-print 100*math.sqrt(mean_squared_error(ytesten['Correct Values'], stupidprediction))/ytest2['Correct Values'].mean(axis=1)
+print 'Stupid prediction: ' + str(100*math.sqrt(mean_squared_error(ytesten['Correct Values'], stupidprediction))/ytest2['Correct Values'].mean(axis=1))
 
 allpredictions=DataFrame(0,index=enpredictions.index, columns=['Lasso', 'Ridge', 'Elastic Net', 'Average'])
 allpredictions['Lasso'] = ytest2['Predictions']
 allpredictions['Ridge']=ytestrid['Predictions']
 allpredictions['Elastic Net']=ytesten['Predictions']
 allpredictions['Average']=allpredictions[['Lasso', 'Ridge', 'Elastic Net']].mean(axis=1)
-print 100*math.sqrt(mean_squared_error(ytesten['Correct Values'], allpredictions['Average']))/ytest2['Correct Values'].mean(axis=1)
+print 'Average Prediction: ' + str(100*math.sqrt(mean_squared_error(ytesten['Correct Values'], allpredictions['Average']))/ytest2['Correct Values'].mean(axis=1))
+
+#make predictions stuff 
+
+pred_filename  = 'predictionsExample.csv'
+
+with open(pred_filename, 'w') as pred_fh:
+
+    # Produce a CSV file.
+    pred_csv = csv.writer(pred_fh, delimiter=',', quotechar='"',lineterminator='\n')
+
+    # Write the header row.
+    pred_csv.writerow(['Id', 'Prediction'])
+
+    for i in range(4999):
+        pred_csv.writerow([i, allpredictions['Average'][i]])
