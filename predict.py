@@ -32,12 +32,12 @@ with open('train_subset.csv', 'r') as subset_fh:
 random.shuffle(train_subset)
 
 # Split into train and test data
-train_subset_train = train_subset[:501]#splits into train and test
+train_subset_train = train_subset[:5001]#splits into train and test
 train_subset_test = train_subset[5001:]
 
 #Lasso regression code here
 
-for i in range(501):
+for i in range(5001):
     if i==0: 
         X=train_subset_train[0]['features']#makes first row of matrix    
         y=train_subset_train[0]['gap']
@@ -47,7 +47,7 @@ for i in range(501):
 Xtrain=X.as_matrix()
 ytrain=y.as_matrix()
 
-for i in range(499):#ditto for test features
+for i in range(4999):#ditto for test features
     if i==0:
         X=train_subset_test[0]['features']
         y=train_subset_test[0]['gap']
@@ -57,7 +57,8 @@ for i in range(499):#ditto for test features
 Xtest=X.as_matrix()
 ytest=y.as_matrix()
 
-lasso=Lasso(alpha=.0)
+alpha=.01
+lasso=Lasso(alpha=alpha)
 
 predictions=lasso.fit(Xtrain, ytrain).predict(Xtest)#trains and predicts
 lasso.coef_#coefficients
@@ -65,19 +66,19 @@ predictions=DataFrame(predictions)#changes forms of predictions
 ytest2=DataFrame(y.values, index=predictions.index, columns=['Correct Values'])
 ytest2['Predictions']=predictions#dataframe with predictions and correct value
 #print ytest2
-#print lasso.coef_
+lasso.coef_
 print 100*math.sqrt(mean_squared_error(ytest2['Correct Values'], ytest2['Predictions']))/ytest2['Correct Values'].mean(axis=1)
 
-ridge=Ridge(alpha=.0)
+ridge=Ridge(alpha=alpha)
 ridpredictions=ridge.fit(Xtrain, ytrain).predict(Xtest)
 ridpredictions=DataFrame(ridpredictions)#changes forms of predictions
 ytestrid=DataFrame(y.values, index=ridpredictions.index, columns=['Correct Values'])
 ytestrid['Predictions']=ridpredictions#dataframe with predictions and correct value
 #print ytestrid
-#print ridge.coef_
+ridge.coef_
 print 100*math.sqrt(mean_squared_error(ytestrid['Correct Values'], ytestrid['Predictions']))/ytestrid['Correct Values'].mean(axis=1)
 
-en=ElasticNet(alpha=.0, l1_ratio= 0)#second term is l1/l2 ratio of penalty. set to 0 means all l2, 1 means l1
+en=ElasticNet(alpha=alpha, l1_ratio= 0.1)#second term is l1/l2 ratio of penalty. set to 0 means all l2, 1 means l1
 enpredictions=en.fit(Xtrain,ytrain).predict(Xtest)
 enpredictions=DataFrame(enpredictions)#changes forms of predictions
 ytesten=DataFrame(y.values, index=enpredictions.index, columns=['Correct Values'])
@@ -88,3 +89,10 @@ print 100*math.sqrt(mean_squared_error(ytesten['Correct Values'], ytesten['Predi
 
 stupidprediction=DataFrame(np.mean(ytrain),index=enpredictions.index, columns=['Averages'])
 print 100*math.sqrt(mean_squared_error(ytesten['Correct Values'], stupidprediction))/ytest2['Correct Values'].mean(axis=1)
+
+allpredictions=DataFrame(0,index=enpredictions.index, columns=['Lasso', 'Ridge', 'Elastic Net', 'Average'])
+allpredictions['Lasso'] = ytest2['Predictions']
+allpredictions['Ridge']=ytestrid['Predictions']
+allpredictions['Elastic Net']=ytesten['Predictions']
+allpredictions['Average']=allpredictions[['Lasso', 'Ridge', 'Elastic Net']].mean(axis=1)
+print 100*math.sqrt(mean_squared_error(ytesten['Correct Values'], allpredictions['Average']))/ytest2['Correct Values'].mean(axis=1)
