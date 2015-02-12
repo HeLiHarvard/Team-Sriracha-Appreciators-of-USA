@@ -4,6 +4,8 @@ import random
 import sklearn.linear_model
 from  sklearn.linear_model import Lasso, Ridge, ElasticNet
 from pandas import DataFrame
+from sklearn.metrics import mean_squared_error
+import math
 
 # Load the subset file.
 train_subset = []
@@ -31,7 +33,7 @@ random.shuffle(train_subset)
 
 # Split into train and test data
 train_subset_train = train_subset[:501]#splits into train and test
-train_subset_test = train_subset[501:]
+train_subset_test = train_subset[5001:]
 
 #Lasso regression code here
 
@@ -55,7 +57,7 @@ for i in range(499):#ditto for test features
 Xtest=X.as_matrix()
 ytest=y.as_matrix()
 
-lasso=Lasso()
+lasso=Lasso(alpha=.0)
 
 predictions=lasso.fit(Xtrain, ytrain).predict(Xtest)#trains and predicts
 lasso.coef_#coefficients
@@ -63,19 +65,26 @@ predictions=DataFrame(predictions)#changes forms of predictions
 ytest2=DataFrame(y.values, index=predictions.index, columns=['Correct Values'])
 ytest2['Predictions']=predictions#dataframe with predictions and correct value
 #print ytest2
+#print lasso.coef_
+print 100*math.sqrt(mean_squared_error(ytest2['Correct Values'], ytest2['Predictions']))/ytest2['Correct Values'].mean(axis=1)
 
-ridge=Ridge(alpha=1.0)
+ridge=Ridge(alpha=.0)
 ridpredictions=ridge.fit(Xtrain, ytrain).predict(Xtest)
 ridpredictions=DataFrame(ridpredictions)#changes forms of predictions
 ytestrid=DataFrame(y.values, index=ridpredictions.index, columns=['Correct Values'])
 ytestrid['Predictions']=ridpredictions#dataframe with predictions and correct value
 #print ytestrid
 #print ridge.coef_
+print 100*math.sqrt(mean_squared_error(ytestrid['Correct Values'], ytestrid['Predictions']))/ytestrid['Correct Values'].mean(axis=1)
 
-en=ElasticNet(alpha=1, l1_ratio= 0)#second term is l1/l2 ratio of penalty. set to 0 means all l2, 1 means l1
+en=ElasticNet(alpha=.0, l1_ratio= 0)#second term is l1/l2 ratio of penalty. set to 0 means all l2, 1 means l1
 enpredictions=en.fit(Xtrain,ytrain).predict(Xtest)
 enpredictions=DataFrame(enpredictions)#changes forms of predictions
 ytesten=DataFrame(y.values, index=enpredictions.index, columns=['Correct Values'])
 ytesten['Predictions']=enpredictions#dataframe with predictions and correct value
-print en.coef_
-print ytesten
+en.coef_
+ytesten
+print 100*math.sqrt(mean_squared_error(ytesten['Correct Values'], ytesten['Predictions']))/ytest2['Correct Values'].mean(axis=1)
+
+stupidprediction=DataFrame(np.mean(ytrain),index=enpredictions.index, columns=['Averages'])
+print 100*math.sqrt(mean_squared_error(ytesten['Correct Values'], stupidprediction))/ytest2['Correct Values'].mean(axis=1)
