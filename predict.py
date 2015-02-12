@@ -3,6 +3,7 @@ import numpy as np
 import random
 import sklearn.linear_model
 from  sklearn.linear_model import Lasso
+from sklearn.linear_model import Ridge
 from pandas import DataFrame
 
 # Load the subset file.
@@ -17,10 +18,10 @@ with open('train_subset.csv', 'r') as subset_fh:
 
     # Load the data.
     for row in subset_csv:
-        smiles   = row[0]
-        numbers=[float(i) for i in row[1].split(']')[0].split()[1:]]
-        features=DataFrame.transpose(DataFrame(numbers))
-        gap=DataFrame(float(row[2]), index=[0], columns=[0])
+        smiles   = row[0]#first row, all chemical symbols
+        numbers=[float(i) for i in row[1].split(']')[0].split()[1:]]#converts to floats
+        features=DataFrame.transpose(DataFrame(numbers))#saves features
+        gap=DataFrame(float(row[2]), index=[0], columns=[0])#saves gap, what we want to predict
 
         train_subset.append({ 'smiles':   smiles,
                             'features': features,
@@ -30,22 +31,22 @@ with open('train_subset.csv', 'r') as subset_fh:
 random.shuffle(train_subset)
 
 # Split into train and test data
-train_subset_train = train_subset[:501]
+train_subset_train = train_subset[:501]#splits into train and test
 train_subset_test = train_subset[501:]
 
 #Lasso regression code here
 
 for i in range(501):
     if i==0: 
-        X=train_subset_train[0]['features']    
+        X=train_subset_train[0]['features']#makes first row of matrix    
         y=train_subset_train[0]['gap']
     else:
-        X=X.append(train_subset_train[i]['features'], ignore_index=True)
+        X=X.append(train_subset_train[i]['features'], ignore_index=True)#appends next set
         y=y.append(train_subset_train[i]['gap'], ignore_index=True)
 Xtrain=X.as_matrix()
 ytrain=y.as_matrix()
 
-for i in range(499):
+for i in range(499):#ditto for test features
     if i==0:
         X=train_subset_test[0]['features']
         y=train_subset_test[0]['gap']
@@ -55,11 +56,19 @@ for i in range(499):
 Xtest=X.as_matrix()
 ytest=y.as_matrix()
 
-testing=Lasso()
-testing.fit(Xtrain, ytrain)
-testing.coef_
-predictions=testing.predict(Xtest)
-predictions=DataFrame(predictions)
+lasso=Lasso()
+
+predictions=lasso.fit(Xtrain, ytrain).predict(Xtest)#trains and predicts
+lasso.coef_#coefficients
+predictions=DataFrame(predictions)#changes forms of predictions
 ytest2=DataFrame(y.values, index=predictions.index, columns=['Correct Values'])
-ytest2['predictions']=predictions
-print ytest2
+ytest2['Predictions']=predictions#dataframe with predictions and correct value
+#print ytest2
+
+ridge=Ridge(alpha=1.0)
+ridpredictions=ridge.fit(Xtrain, ytrain).predict(Xtest)
+ridpredictions=DataFrame(ridpredictions)#changes forms of predictions
+ytestrid=DataFrame(y.values, index=ridpredictions.index, columns=['Correct Values'])
+ytestrid['Predictions']=ridpredictions#dataframe with predictions and correct value
+print ytestrid
+print ridge.coef_
