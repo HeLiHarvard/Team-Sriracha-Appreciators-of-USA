@@ -63,8 +63,8 @@ for i in range(10000):#ditto for test features
 Xtrain=X.as_matrix()
 ytrain=y.as_matrix()
 
-
-for i in range(824230):#ditto for test features
+#824230
+for i in range(20000):#ditto for test features
     if i==0:
         X=test_data[0]['features']
     else:
@@ -90,7 +90,7 @@ with open(pred_filename, 'w') as pred_fh:
 
     # Write the header row.
     pred_csv.writerow(['Id', 'Prediction'])
-
-    for i in range(824230):
+#824230
+    for i in range(20000):
         pred_csv.writerow([i, ridpredictions[i]])
 
