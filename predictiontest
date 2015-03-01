@@ -42,15 +42,9 @@ varlist=[multivariate_normal(mean=mu.ix[k].values, cov=covlist[k].values) for k 
 #TODO: finish changing this.
 
 def classifier3(data):
-    class1=var1.pdf(data)*pi.ix[1]
-    class2=var2.pdf(data)*pi.ix[2]
-    class3=var3.pdf(data)*pi.ix[3]
-    class1=class1['probability']
-    class2=class2['probability']
-    class3=class3['probability']
-    if class1> class2 and class1> class3:
-        return 1
-    elif class2> class1 and class2> class3:
-        return 2
-    elif class3>class2 and class3>class1:
-        return 3
+	classlist=[varlist[k].pdf(data)*pi.ix[k] for k in range(15)]
+	for k in range(15):
+		classlist[k]=classlist[k]['probability']
+	#copied from internet, see if works
+	index, value = max(enumerate(my_list), key=operator.itemgetter(1))
+	return index
