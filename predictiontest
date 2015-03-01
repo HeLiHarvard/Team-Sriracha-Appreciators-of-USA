@@ -1,55 +1,47 @@
 from scipy.stats import multivariate_normal
 
+#X= dataframe of features (training) 
+#Y = dataframe of what class it is (training)
+#copied from Kate's homework. 
 
-#copied from Kate's homework. TODO: make this work with many more classes
+#TODO: make this work with many more classes
 #generative predictor:
 #make pi
-pi = pd.DataFrame(0, index=[1, 2, 3], columns=['probability'])
-for n in range(len(width)):
-    for k in [1, 2, 3]:
-        if Y.iloc[n][0]==k:
-            pi.ix[k]=pi.ix[k]+1
-#pi = pi/ len(width) do this last
+pi = pd.DataFrame([0.0369, 0.0162, 0.0120, 0.0103, 0.0133, 0.0126, 0.0172, 0.0133, 0.5214, 0.0068, 0.1756, 0.0104, 0.1218, 0.0191, 0.0130], index=range(15), columns=['probability'])
+#switch from probability to count
+pi=3086*pi
 
+#featureslist: list of the names of the features. 
 #make mu
-mu = pd.DataFrame(0, index=[1, 2, 3], columns=['width', 'height'])
+mu = pd.DataFrame(0, index=range(15), columns=featureslist)
 for n in range(len(width)):
-    for k in [1, 2, 3]:
+    for k in range(15):
         if Y.iloc[n][0]==k:
-            mu.ix[k]=mu.ix[k]+ X.ix[n][['width', 'height']]
-for k in [1, 2, 3]:
+            mu.ix[k]=mu.ix[k]+ X.ix[n][featureslist]
+for k in range(15):
     mu.ix[k]=mu.ix[k]/pi.ix[k][0]
 
-#make S
-S1 = pd.DataFrame(0, index=['width', 'height'], columns=['width', 'height'])
-S2 = pd.DataFrame(0, index=['width', 'height'], columns=['width', 'height'])
-S3 = pd.DataFrame(0, index=['width', 'height'], columns=['width', 'height'])
-k=1
-for n in range(len(width)):
-    if Y.iloc[n][0]==k:
-        blah=(X.ix[n][['width', 'height']] - mu.ix[k][['width', 'height']])
-        S1=S1+ pd.DataFrame(blah).dot(pd.DataFrame(blah).transpose())
-k=2
-for n in range(len(width)):
-    if Y.iloc[n][0]==k:
-        blah=(X.ix[n][['width', 'height']] - mu.ix[k][['width', 'height']])
-        S2=S2+ pd.DataFrame(blah).dot(pd.DataFrame(blah).transpose())
-k=3
-for n in range(len(width)):
-    if Y.iloc[n][0]==k:
-        blah=(X.ix[n][['width', 'height']] - mu.ix[k][['width', 'height']])
-        S3=S3+ pd.DataFrame(blah).dot(pd.DataFrame(blah).transpose())
+#make list of covariance dataframes
+S1 = pd.DataFrame(0, index=featureslist, columns=featureslist)
+covlist=[S1 for i in range(15)]
 
-S1=S1/pi.ix[1][0]
-S2=S2/pi.ix[2][0]
-S3=S3/pi.ix[3][0]
+for k in range(15):
+	for n in range(len(width)):
+    	if Y.iloc[n][0]==k:
+        	blah=(X.ix[n][featureslist] - mu.ix[k][featureslist])
+        	covlist[k]=covlist[k]+ pd.DataFrame(blah).dot(pd.DataFrame(blah).transpose())
 
-pi = pi/ len(width)
+for k in range(15):
+	covlist[k]=covlist[k]/pi.ix[k].[0]
+
+#switch from count to probability
+pi=pi*1/(3086)
+
+
+varlist=[multivariate_normal(mean=mu.ix[k].values, cov=covlist[k].values) for k in range(15)]
+#TODO: finish changing this.
 
 def classifier3(data):
-    var1=multivariate_normal(mean=mu.ix[1].values, cov=S1.values)
-    var2=multivariate_normal(mean=mu.ix[2].values, cov=S2.values)
-    var3=multivariate_normal(mean=mu.ix[3].values, cov=S3.values)
     class1=var1.pdf(data)*pi.ix[1]
     class2=var2.pdf(data)*pi.ix[2]
     class3=var3.pdf(data)*pi.ix[3]
