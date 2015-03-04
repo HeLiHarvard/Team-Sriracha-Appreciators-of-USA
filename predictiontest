@@ -4,14 +4,15 @@ from scipy.stats import multivariate_normal
 #Y = dataframe of what class it is (training)
 #copied from Kate's homework. 
 
+numtrain=1516 #size of training data
 #TODO: make this work with many more classes
 #generative predictor:
 #make pi
 pi = pd.DataFrame([0.0369, 0.0162, 0.0120, 0.0103, 0.0133, 0.0126, 0.0172, 0.0133, 0.5214, 0.0068, 0.1756, 0.0104, 0.1218, 0.0191, 0.0130], index=range(15), columns=['probability'])
 #switch from probability to count
-pi=3086*pi
+pi=numtrain*pi
 
-#featureslist: list of the names of the features. 
+featureslist=[first_last_system_call_feats, system_call_count_feats] #featureslist: list of the names of the features. 
 #make mu
 mu = pd.DataFrame(0, index=range(15), columns=featureslist)
 for n in range(len(width)):
@@ -35,7 +36,7 @@ for k in range(15):
 	covlist[k]=covlist[k]/pi.ix[k].[0]
 
 #switch from count to probability
-pi=pi*1/(3086)
+pi=pi*1/(numtrain)
 
 
 varlist=[multivariate_normal(mean=mu.ix[k].values, cov=covlist[k].values) for k in range(15)]
