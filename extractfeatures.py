@@ -23,7 +23,11 @@ def successful_feats(tree):
 
   return c
 
-def depth_width_feats(tree):
+def lines_count_feat(tree):
 
   c = Counter()
 
+  for el in tree.iter():
+    c['lines'] += 1
+
+  return c
